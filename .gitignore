@@ -1,0 +1,15 @@
+# Emacs
+#*#
+.#*
+
+# Python
+__pycache__/
+
+# Log files
+logs/*
+
+# Report files
+reports/*
+
+# Data files
+data/*
