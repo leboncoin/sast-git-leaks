@@ -7,6 +7,7 @@ Licensed under the Apache License
 Written by Fabien Martinez <fabien.martinez+github@adevinta.com>
 '''
 from pathlib import Path
+from uuid import uuid4
 
 
 CONFIG_PATH = Path(__file__).parent
@@ -21,8 +22,9 @@ GITLEAKS = {
     'bin': 'gitleaks',
     'cmd': '{binary} {args} --repo-path="{path}"',
 }
-GITLEAKS['report'] = REPORT_PATH / GITLEAKS['name'] / 'gitleaks_report.json'
+GITLEAKS['report'] = REPORT_PATH / GITLEAKS['name'] / f'gitleaks_report_{str(uuid4()).replace("-", "_")}'
 GITLEAKS['args'] = f'--verbose --report={GITLEAKS["report"].resolve()}'
+GITLEAKS['arg_report'] = '--report={report_path}'
 GITLEAKS['arg_commit'] = ' --commit-to={commit}'
 GITLEAKS['data_path'] = DATA_PATH / GITLEAKS['name']
 GITLEAKS['data_last_commit_filename'] = '{name}_{repo}.txt'
@@ -35,7 +37,7 @@ SHHGIT = {
     'bin': 'shhgit',
     'cmd': '{binary} {args} --local "{path}"'
 }
-SHHGIT['report'] = REPORT_PATH / SHHGIT['name'] / 'shhgit_report.csv'
+SHHGIT['report'] = REPORT_PATH / SHHGIT['name'] / f'shhgit_report_{str(uuid4()).replace("-", "_")}.csv'
 SHHGIT['conf'] = CONFIG_PATH / SHHGIT['name']
 SHHGIT['args'] = f'--config-path {SHHGIT["conf"].resolve()} --csv-path={SHHGIT["report"].resolve()}'
 
