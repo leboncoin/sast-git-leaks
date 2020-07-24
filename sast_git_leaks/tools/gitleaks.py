@@ -21,7 +21,7 @@ class Gitleaks(ToolAbstract):
 
     def __init__(self, data: dict, path: Path, data_path: Path) -> None:
         self._logger = logging.getLogger(__name__)
-        self._last_commit_path = data['data_path'] / data['data_last_commit_filename'].format(
+        self._last_commit_path = data_path / data['data_last_commit_filename'].format(
             name=data['name'],
             repo=path.parts[-1].replace(' ', '_').lower()
         )
