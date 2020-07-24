@@ -1,14 +1,1 @@
-appdirs==1.4.4
-astroid==2.4.2
-distlib==0.3.1
-filelock==3.0.12
-isort==4.3.21
-lazy-object-proxy==1.4.3
-mccabe==0.6.1
-protobuf==3.12.3
-pylint==2.5.3
 PyYAML==5.3.1
-six==1.15.0
-toml==0.10.1
-virtualenv==20.0.27
-wrapt==1.12.1
