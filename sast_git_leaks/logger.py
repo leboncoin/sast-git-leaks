@@ -7,9 +7,10 @@ Written by Fabien Martinez <fabien.martinez+github@adevinta.com>
 import ctypes
 import logging
 import logging.config
-import yaml
 import os
 import sys
+
+import yaml
 
 
 class ColorizingStreamHandler(logging.StreamHandler):
