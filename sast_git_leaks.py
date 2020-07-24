@@ -66,6 +66,16 @@ def load_tools(tools_loaded: str, path: Path, logger: logging):
 
 
 def main():
+    if not variables.LOG_PATH.exists():
+        try:
+            variables.LOG_PATH.mkdir(parents=True)
+        except Exception as e:
+            print(f"Unable to load LOG_PATH: {e}")
+            sys.exit(2)
+    else:
+        if not variables.LOG_PATH.is_dir():
+            print("BAD LOG_PATH")
+            sys.exit(3)
     logging.setup_logging(variables.LOG_FILENAME.absolute())
     logger = logging.getLogger(__name__)
     tools_names = variables.TOOLS.keys()

@@ -12,6 +12,7 @@ from uuid import uuid4
 
 CONFIG_PATH = Path(__file__).parent
 DATA_PATH = CONFIG_PATH / '..' / 'data'
+LOG_PATH = CONFIG_PATH / '..' / 'logs'
 REPORT_PATH = CONFIG_PATH / '..' / 'reports'
 LOG_FILENAME = CONFIG_PATH / 'log.yml'
 
