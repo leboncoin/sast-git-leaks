@@ -2,7 +2,7 @@
 Copyright (C) 2010-2012 Vinay Sajip. All rights reserved. Licensed under the new BSD license.
 Copyright 2020 Leboncoin
 Licensed under the Apache License
-Written by Ankirama
+Written by Fabien Martinez <fabien.martinez+github@adevinta.com>
 """
 import ctypes
 import logging
