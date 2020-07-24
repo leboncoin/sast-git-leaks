@@ -1,7 +1,9 @@
-#
-# Copyright (C) 2010-2012 Vinay Sajip. All rights reserved. Licensed under the new BSD license.
-# Updated in 2020 by Ankirama
-#
+"""
+Copyright (C) 2010-2012 Vinay Sajip. All rights reserved. Licensed under the new BSD license.
+Copyright 2020 Leboncoin
+Licensed under the Apache License
+Written by Ankirama
+"""
 import ctypes
 import logging
 import logging.config
