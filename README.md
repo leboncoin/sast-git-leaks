@@ -70,4 +70,4 @@ Licensed under the [Apache License](https://github.com/leboncoin/sast-git-leaks/
 
 # COPYRIGHT
 
-Copyright 2020 Ankirama; ([ankirama](https://github.com/ankirama/))
+Copyright 2020 Leboncoin
