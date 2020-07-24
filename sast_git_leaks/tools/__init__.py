@@ -24,8 +24,9 @@ class ToolAbstract():
     _report = list()
     _output_command = None
     _path = None
+    _data_path = None
 
-    def __init__(self, data: dict, path: Path) -> None:
+    def __init__(self, data: dict, path: Path, data_path: Path) -> None:
         '''
         data must at least contains:
             - cmd
@@ -48,6 +49,7 @@ class ToolAbstract():
             raise Exception(f'Bad command! Check your config. Unable to find key [{e}]')
         except Exception as e:
             raise Exception(f'Unable to set command: {e}')
+        self._data_path = data_path
         if not self._check_binary(data['bin']):
             raise Exception(f"Unable to find [{data['bin']}]")
         self._path = path

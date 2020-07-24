@@ -29,6 +29,7 @@ def load_tool(tool: dict, path: Path, logger: logging):
             )(
                 tool,
                 path,
+                variables.DATA_PATH
             )
     except Exception as e:
         logger.error(f'Unable to load {tool["name"]}: {e}', exc_info=True)
@@ -72,6 +73,7 @@ def main():
     parser.add_argument('-r', '--repo', help='name of the repo to scan', required=True)
     parser.add_argument('-o', '--output', help='name of the json report', required=True)
     parser.add_argument('-t', '--tools', help=f'tools to use ({",".join(tools_names)})', default='all')
+    parser.add_argument('-v', '--volume', help='directory to keep data', default=variables.DATA_PATH)
     args = parser.parse_args()
     repo_path = Path(args.repo)
     logger.info(f'Repository to check: {repo_path}')
@@ -83,6 +85,9 @@ def main():
     if not utils.clean_file(report_path, logger):
         sys.exit(1)
     tools = load_tools(args.tools, repo_path, logger)
+    variables.DATA_PATH = Path(args.volume)
+    if not variables.DATA_PATH.is_dir():
+        logger.error(f'Unable to find a valid data path for [{variables.DATA_PATH.resolve()}]')
     if tools is False:
         sys.exit(1)
     logger.info(f'Tools loaded: {", ".join([tool["name"] for tool in tools])}')

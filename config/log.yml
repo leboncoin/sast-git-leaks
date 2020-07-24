@@ -32,7 +32,7 @@ handlers:
 loggers:
     my_module:
         level: DEBUG
-        handlers: [console]
+        handlers: []
         propagate: no
 
 root:

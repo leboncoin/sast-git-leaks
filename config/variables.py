@@ -26,7 +26,6 @@ GITLEAKS['report'] = REPORT_PATH / GITLEAKS['name'] / f'gitleaks_report_{str(uui
 GITLEAKS['args'] = f'--verbose --report={GITLEAKS["report"].resolve()}'
 GITLEAKS['arg_report'] = '--report={report_path}'
 GITLEAKS['arg_commit'] = ' --commit-to={commit}'
-GITLEAKS['data_path'] = DATA_PATH / GITLEAKS['name']
 GITLEAKS['data_last_commit_filename'] = '{name}_{repo}.txt'
 GITLEAKS['last_commit_cmd'] = 'git -C {repo_path} rev-parse HEAD'
 
