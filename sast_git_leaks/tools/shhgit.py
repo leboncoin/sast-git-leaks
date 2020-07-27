@@ -37,9 +37,12 @@ class Shhgit(ToolAbstract):
         Generate data from _data
         '''
         for line in self._data:
+            matches = line["Signature name"]
+            if len(line["Matches"]) > 0:
+                matches = line["Matches"]
             self._report.append({
                 'title': f'[{self._name}]: {line["Signature name"]}',
                 'criticity': 'medium',
                 'component': line['Matching file'],
-                'reason': line['Matches']
+                'reason': matches
             })
