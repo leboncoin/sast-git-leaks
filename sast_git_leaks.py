@@ -92,8 +92,6 @@ def main():
         sys.exit(1)
     report_path = Path(args.output)
     logger.info(f'Report path: {report_path}')
-    if not utils.clean_file(report_path, logger):
-        sys.exit(1)
     tools = load_tools(args.tools, repo_path, logger)
     variables.DATA_PATH = Path(args.volume)
     if not variables.DATA_PATH.is_dir():

@@ -54,10 +54,13 @@ class ToolAbstract():
             raise Exception(f"Unable to find [{data['bin']}]")
         self._path = path
         self._report_path = data['report']
-        if not utils.clean_file(self._report_path, self._logger):
-            raise Exception(f'Unable to clean report file [{self._report_path.resolve()}]')
-        if self._report_path.exists() and not self._report_path.is_file():
-            raise Exception(f'Unable to create {self._report_path.parts[-1]}: it already exists and isn\'t a file')
+        if self._report_path.exists():
+            if not self._report_path.is_file():
+                raise Exception(f'Unable to create {self._report_path.parts[-1]}: it already exists and isn\'t a file')
+            else:
+                self._report = utils.read_json(self._report_path)
+                if self._report is False:
+                    raise Exception(f'Unable to get report file content from [{self.report_path.resolve()}]')
         if not self._report_path.parent.exists():
             self._logger.warning(f'Directory [{self._report_path.parent.resolve()}] doesn\'t exist, creating it')
             try:
