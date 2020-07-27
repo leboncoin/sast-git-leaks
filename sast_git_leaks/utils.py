@@ -26,13 +26,15 @@ def read_csv(path: Path):
             except Exception as e:
                 logger.error(f'Unable to get csv data from [{path.resolve()}]: {e}')
                 return False
+            try:
+                data = [line for line in csv_data]
+            except Exception as e:
+                logger.error(f'Unable to get csv data from [{path.resolve()}]: {e}')
+                return False
     except Exception as e:
         logger.error(f'Unable to read file [{path.resolve()}]: {e}')
         return False
     else:
-        if csv_data.line_num == 0:
-            return []
-        data = [line for line in csv_data]
         logger.info(f'Data successfuly extracted from [{path}]')
         return data
 
