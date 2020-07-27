@@ -38,7 +38,7 @@ class Shhgit(ToolAbstract):
         '''
         for line in self._data:
             self._report.append({
-                'title': line['Signature name'],
+                'title': f'[{self._name}]: {line["Signature name"]}',
                 'criticity': 'medium',
                 'component': line['Matching file'],
                 'reason': line['Matches']

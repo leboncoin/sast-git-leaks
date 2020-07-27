@@ -110,7 +110,7 @@ class Gitleaks(ToolAbstract):
         self._logger.info('Generating report')
         for line in self._data:
             self._report.append({
-                'title': line['rule'],
+                'title': f'[{self._name}]: {line["rule"]}',
                 'criticity': 'medium',
                 'component': line['file'],
                 'reason': f'Commit: `{line["commit"]}\nRule: `{line["rule"]}\nCode: `{line["line"]}`'

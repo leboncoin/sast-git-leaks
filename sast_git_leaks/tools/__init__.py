@@ -25,6 +25,7 @@ class ToolAbstract():
     _output_command = None
     _path = None
     _data_path = None
+    _name = "Tool"
 
     def __init__(self, data: dict, path: Path, data_path: Path) -> None:
         '''
@@ -49,6 +50,7 @@ class ToolAbstract():
             raise Exception(f'Bad command! Check your config. Unable to find key [{e}]')
         except Exception as e:
             raise Exception(f'Unable to set command: {e}')
+        self._name = data['name']
         self._data_path = data_path
         if not self._check_binary(data['bin']):
             raise Exception(f"Unable to find [{data['bin']}]")
