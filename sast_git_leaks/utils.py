@@ -13,7 +13,7 @@ from pathlib import Path
 from . import logger as logging
 
 
-def read_csv(path):
+def read_csv(path: Path):
     '''
     Read csv file and return list of rows
     '''
@@ -37,7 +37,7 @@ def read_csv(path):
         return data
 
 
-def read_json(path):
+def read_json(path: Path):
     '''
     Read json file and return a dict
     '''
