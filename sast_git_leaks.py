@@ -94,8 +94,16 @@ def main():
     logger.info(f'Report path: {report_path}')
     tools = load_tools(args.tools, repo_path, logger)
     variables.DATA_PATH = Path(args.volume)
-    if not variables.DATA_PATH.is_dir():
-        logger.error(f'Unable to find a valid data path for [{variables.DATA_PATH.resolve()}]')
+    if not variables.DATA_PATH.exists():
+        logger.info(f'Creating data folder [{variables.DATA_PATH.resolve()}]')
+        try:
+            variables.DATA_PATH.mkdir(parents=True)
+        except Exception as e:
+            logger.error(f'Unable to create data directory [{variables.DATA_PATH.resolve()}]: {e}')
+            sys.exit(1)
+    else:
+        if not variables.DATA_PATH.is_dir():
+            logger.error(f'Unable to find a valid data path for [{variables.DATA_PATH.resolve()}]')
     if tools is False:
         sys.exit(1)
     logger.info(f'Tools loaded: {", ".join([tool["name"] for tool in tools])}')
