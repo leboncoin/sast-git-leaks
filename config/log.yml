@@ -1,22 +1,26 @@
 version: 1
 disable_existing_loggers: False
 formatters:
-    simple:
-        format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-
+  simple:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  syslog:
+    format: "git-leaks: %(name)s - %(levelname)s - %(message)s"
 handlers:
-    console:
-        class: logging.StreamHandler
-        level: DEBUG
-        formatter: simple
-        stream: ext://sys.stdout
-
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+  syslog:
+    class: logging.handlers.SysLogHandler
+    level: INFO
+    formatter: syslog
+    address: '/dev/log'
 loggers:
-    my_module:
-        level: DEBUG
-        handlers: [console]
-        propagate: no
-
-root:
+  my_module:
     level: DEBUG
     handlers: [console]
+    propagate: no
+root:
+  level: INFO
+  handlers: [console, syslog]
