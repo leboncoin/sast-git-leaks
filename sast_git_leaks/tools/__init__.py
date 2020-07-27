@@ -26,8 +26,9 @@ class ToolAbstract():
     _path = None
     _data_path = None
     _name = "Tool"
+    _tool_report_path = None
 
-    def __init__(self, data: dict, path: Path, data_path: Path) -> None:
+    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path) -> None:
         '''
         data must at least contains:
             - cmd
@@ -55,7 +56,8 @@ class ToolAbstract():
         if not self._check_binary(data['bin']):
             raise Exception(f"Unable to find [{data['bin']}]")
         self._path = path
-        self._report_path = data['report']
+        self._tool_report_path = data['report']
+        self._report_path = report_path
         if self._report_path.exists():
             if not self._report_path.is_file():
                 raise Exception(f'Unable to create {self._report_path.parts[-1]}: it already exists and isn\'t a file')
@@ -160,7 +162,17 @@ class ToolAbstract():
                 self._logger.debug(f'Output from [{command}]: {self._output_command}')
         return True
 
-    def write_report(self, report_path: Path) -> bool:
+    def clean(self) -> bool:
+        '''
+        Clean tmp report created
+        '''
+        self._logger.info(f'Removing {self._tool_report_path.resolve()}')
+        if not utils.clean_file(self._tool_report_path, self._logger):
+            self._logger.warning('Unable to clean tmp files')
+            return False
+        return True
+
+    def write_report(self) -> bool:
         '''
         Append lines in our report file
         We have to load the current report file, then add data in it
@@ -173,22 +185,19 @@ class ToolAbstract():
         '''
         old_report = list()
         try:
-            with report_path.open('r') as f:
+            with self._report_path.open('r') as f:
                 old_report = json.load(f)
         except FileNotFoundError:
             pass
         except Exception as e:
-            self._logger.error(f'Unable to read [{report_path.resolve()}]: {e}')
+            self._logger.error(f'Unable to read [{self._report_path.resolve()}]: {e}')
             return False
-        self._logger.debug(f'OLD_REPORT => {old_report}')
-        self._logger.debug(f'REPORT => {self._report}')
         report = old_report + self._report
-        self._logger.debug(report)
         try:
-            with report_path.open('w') as f:
+            with self._report_path.open('w') as f:
                 f.write(json.dumps(report, separators=(',', ':'), indent=4, sort_keys=False))
         except Exception as e:
-            self._logger.error(f'Unable to update file [{report_path.resolve()}]: {e}')
+            self._logger.error(f'Unable to update file [{self._report_path.resolve()}]: {e}')
             return False
         self._logger.info('Report updated')
         return True

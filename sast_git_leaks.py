@@ -18,7 +18,7 @@ from sast_git_leaks import logger as logging
 from sast_git_leaks import utils
 
 
-def load_tool(tool: dict, path: Path, logger: logging):
+def load_tool(tool: dict, path: Path, logger: logging, report_path: Path):
     '''
     Load tool module then instantiate tool
     '''
@@ -29,7 +29,8 @@ def load_tool(tool: dict, path: Path, logger: logging):
             )(
                 tool,
                 path,
-                variables.DATA_PATH
+                variables.DATA_PATH,
+                report_path
             )
     except Exception as e:
         logger.error(f'Unable to load {tool["name"]}: {e}', exc_info=True)
@@ -39,7 +40,7 @@ def load_tool(tool: dict, path: Path, logger: logging):
         return obj
 
 
-def load_tools(tools_loaded: str, path: Path, logger: logging):
+def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path):
     '''
     Check which tools to load from argument
     '''
@@ -57,7 +58,7 @@ def load_tools(tools_loaded: str, path: Path, logger: logging):
                 tools_to_load[name] = variables.TOOLS[name]
     logger.info(f'Loading tools...')
     for data in tools_to_load.values():
-        obj = load_tool(data, path, logger)
+        obj = load_tool(data, path, logger, report_path)
         if obj is False:
             logger.info(f'Load tools  aborted.')
             return False
@@ -94,7 +95,7 @@ def main():
         if not variables.DATA_PATH.is_dir():
             logger.error(f'Unable to find a valid data path for [{variables.DATA_PATH.resolve()}]')
             sys.exit(1)
-    tools = load_tools(args.tools, repo_path, logger)
+    tools = load_tools(args.tools, repo_path, logger, report_path)
     if tools is False:
         sys.exit(1)
     logger.info(f'Tools loaded: {", ".join([tool["name"] for tool in tools])}')
@@ -103,8 +104,10 @@ def main():
         if not tool['object'].process():
             logger.error(f'Failed to run {tool["name"]}')
         else:
-            if not tool['object'].write_report(report_path):
+            if not tool['object'].write_report():
                 logger.error(f'Failed to write report for tool {tool["name"]}')
+            else:
+                tool['object'].clean()
 
 
 if __name__ == "__main__":

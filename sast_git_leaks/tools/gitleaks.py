@@ -19,7 +19,7 @@ class Gitleaks(ToolAbstract):
     _last_commit_path = None
     _last_commit = None
 
-    def __init__(self, data: dict, path: Path, data_path: Path) -> None:
+    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path) -> None:
         self._logger = logging.getLogger(__name__)
         self._last_commit_path = data_path / data['data_last_commit_filename'].format(
             name=data['name'],
@@ -33,7 +33,7 @@ class Gitleaks(ToolAbstract):
             data['args'] += data['arg_commit'].format(
                 commit=self._last_commit
             )
-        super().__init__(data, path, data_path)
+        super().__init__(data, path, data_path, report_path)
 
     def _check_last_commit(self) -> bool:
         '''

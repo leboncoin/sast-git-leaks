@@ -64,6 +64,7 @@ def clean_file(path: Path, logger) -> bool:
     '''
     Check if file exists, then remove it
     '''
+    logger.debug(f'Removing file {path.resolve()}')
     if path.exists():
         if path.is_file():
             try:
