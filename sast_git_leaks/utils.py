@@ -60,6 +60,26 @@ def read_json(path: Path):
         return json_data
 
 
+def create_dir(path: Path, logger) -> bool:
+    '''
+    Check if directory exists, if not create it
+    '''
+    if path.exists():
+        if not path.is_dir():
+            logger.error(f'Unable to create {path.resolve()}: It already exists and isn\'t a dir')
+            return False
+        else:
+            logger.debug(f'Directory {path.resolve()} already exists.')
+            return True
+    else:
+        try:
+            path.mkdir(parents=True)
+        except Exception as e:
+            logger.error(f'Unable to create directory [{path.resolve()}]: {e}')
+            return False
+    return True
+
+
 def clean_file(path: Path, logger) -> bool:
     '''
     Check if file exists, then remove it

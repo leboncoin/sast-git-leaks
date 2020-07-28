@@ -57,6 +57,8 @@ class ToolAbstract():
             raise Exception(f"Unable to find [{data['bin']}]")
         self._path = path
         self._tool_report_path = data['report']
+        if not utils.create_dir(data['report'].parent, self._logger):
+            raise Exception(f'Unable to create report directory!')
         self._report_path = report_path
         if self._report_path.exists():
             if not self._report_path.is_file():
@@ -109,7 +111,7 @@ class ToolAbstract():
         if not self._run_command(self._command):
             self._logger.debug('Aborted!')
             return False
-        if not self.load_data(self._report_path):
+        if not self.load_data(self._tool_report_path):
             return False
         self.generate_report()
         return True
