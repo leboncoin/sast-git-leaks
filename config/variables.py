@@ -23,8 +23,8 @@ GITLEAKS = {
     'cmd': '{binary} {args} --repo-path="{path}"',
 }
 GITLEAKS['report'] = REPORT_PATH / GITLEAKS['name'] / f'gitleaks_report_{str(uuid4()).replace("-", "_")}'
-GITLEAKS['args'] = f'--verbose --report={GITLEAKS["report"].resolve()}'
-GITLEAKS['arg_commit'] = ' --commit-to={commit}'
+GITLEAKS['conf'] = CONFIG_PATH / GITLEAKS['name'] / 'leaky-repo.toml'
+GITLEAKS['args'] = f'--verbose --report={GITLEAKS["report"].resolve()} --config={GITLEAKS["conf"].resolve()}'
 GITLEAKS['data_last_commit_filename'] = '{name}_{repo}.txt'
 GITLEAKS['last_commit_cmd'] = 'git -C {repo_path} rev-parse HEAD'
 
