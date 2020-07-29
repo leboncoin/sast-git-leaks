@@ -35,7 +35,7 @@ def read_csv(path: Path):
         logger.error(f'Unable to read file [{path.resolve()}]: {e}')
         return False
     else:
-        logger.info(f'Data successfuly extracted from [{path}]')
+        logger.info(f'Data successfully extracted from [{path}]')
         return data
 
 
@@ -56,7 +56,7 @@ def read_json(path: Path):
         logger.error(f'Unable to read file [{path.resolve()}]: {e}')
         return False
     else:
-        logger.info(f'Data successfuly extracted from [{path}]')
+        logger.info(f'Data successfully extracted from [{path}]')
         return json_data
 
 
