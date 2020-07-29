@@ -30,16 +30,6 @@ class ToolAbstract():
 
     def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path) -> None:
         '''
-        data must at least contains:
-            - cmd
-            - bin
-            - args
-            - report
-
-        cmd must have 3 format variables:
-            - binary
-            - args
-            - path
         '''
         try:
             self._command = data['cmd'].format(
