@@ -11,6 +11,7 @@ from subprocess import getstatusoutput, Popen, PIPE
 import shlex
 import json
 from pathlib import Path
+import csv
 
 from .. import utils
 
@@ -19,50 +20,49 @@ class ToolAbstract():
     Abstract class to help create child class
     '''
     _logger = None
-    _data = []
+    _tool_report = list()
     _report_path = None
     _report = list()
     _output_command = None
-    _path = None
-    _data_path = None
-    _name = "Tool"
+    _repo_path = None
     _tool_report_path = None
+    _tool_data = dict()
+    _headers_report = ['title', 'criticity', 'component', 'reason']
 
-    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path) -> None:
+    def __init__(self, data: dict, repo_path: Path, data_path: Path, report_path: Path) -> None:
         '''
         '''
         try:
             self._command = data['cmd'].format(
                 binary=data['bin'],
                 args=data['args'],
-                path=path
+                path=repo_path
             )
         except KeyError as e:
             raise Exception(f'Bad command! Check your config. Unable to find key [{e}]')
         except Exception as e:
             raise Exception(f'Unable to set command: {e}')
-        self._name = data['name']
-        self._data_path = data_path
+        self._tool_data = data
+        self._tool_report_path = data_path
         if not self._check_binary(data['bin']):
             raise Exception(f"Unable to find [{data['bin']}]")
-        self._path = path
+        self._repo_path = repo_path
         self._tool_report_path = data['report']
         if not utils.create_dir(data['report'].parent, self._logger):
             raise Exception(f'Unable to create report directory!')
         self._report_path = report_path
-        if self._report_path.exists():
-            if not self._report_path.is_file():
-                raise Exception(f'Unable to create {self._report_path.parts[-1]}: it already exists and isn\'t a file')
-            else:
-                self._report = utils.read_json(self._report_path)
-                if self._report is False:
-                    raise Exception(f'Unable to get report file content from [{self.report_path.resolve()}]')
         if not self._report_path.parent.exists():
             self._logger.warning(f'Directory [{self._report_path.parent.resolve()}] doesn\'t exist, creating it')
             try:
                 self._report_path.parent.mkdir(parents=True)
             except Exception as e:
                 raise Exception(f'Unable to create directory [{self._report_path.parent.resolve()}]: {e}')
+        if self._report_path.exists():
+            if not self._report_path.is_file():
+                raise Exception(f'Unable to create {self._report_path.parts[-1]}: it already exists and isn\'t a file')
+        else:
+            if not utils.write_csv(self._report_path, [], self._headers_report, True):
+                raise Exception(f'Unable to add CSV headers for file {self._report_path}')
 
     def _check_binary(self, binary_path: str) -> bool:
         '''
@@ -84,13 +84,13 @@ class ToolAbstract():
         '''
         raise NotImplemented
 
-    def generate_report(self) -> None:
+    def generate_report(self) -> bool:
         '''
         Generate data from _data
         '''
         raise NotImplemented
 
-    def process(self) -> bool:
+    def process(self, generate_report=True, write_report=True, clean=True) -> bool:
         '''
         Process data by:
             - Running run_command
@@ -102,8 +102,21 @@ class ToolAbstract():
             self._logger.debug('Aborted!')
             return False
         if not self.load_data(self._tool_report_path):
+            if clean:
+                self.clean()
             return False
-        self.generate_report()
+        if generate_report:
+            if self.generate_report() is False:
+                if clean:
+                    self.clean()
+                return False
+        if write_report:
+            if self.write_csv_report() is False:
+                if clean:
+                    self.clean()
+                return False
+        if clean:
+            self.clean()
         return True
 
     def get_report_path(self) -> Path:
@@ -159,12 +172,27 @@ class ToolAbstract():
         Clean tmp report created
         '''
         self._logger.info(f'Removing {self._tool_report_path.resolve()}')
+        self._tool_report = list()
+        self._report = list()
         if not utils.clean_file(self._tool_report_path, self._logger):
             self._logger.warning('Unable to clean tmp files')
             return False
         return True
 
-    def write_report(self) -> bool:
+    def write_csv_report(self) -> bool:
+        '''
+        Add new lines in our CSV file
+
+        Report format: 'title','criticity','component','reason'
+        '''
+        if not utils.write_csv(self._report_path, self._report, self._headers_report):
+            self._logger.error(f'Unable to update report file {self._report_path.resolve()}')
+            return False
+        else:
+            self._logger.info(f'Report updated with {len(self._report)} new row(s)')
+            return True
+
+    def write_json_report(self) -> bool:
         '''
         Append lines in our report file
         We have to load the current report file, then add data in it

@@ -29,20 +29,21 @@ class Shhgit(ToolAbstract):
             return True
         data = read_csv(path)
         if data is not False:
-            self._data = data
+            self._tool_report = data
         return data != False
 
-    def generate_report(self) -> None:
+    def generate_report(self) -> bool:
         '''
         Generate data from _data
         '''
-        for line in self._data:
+        for line in self._tool_report:
             matches = line["Signature name"]
             if len(line["Matches"]) > 0:
                 matches = line["Matches"]
             self._report.append({
-                'title': f'[{self._name}]: {line["Signature name"]}',
+                'title': f'[{self._tool_data["name"]}]: {line["Signature name"]}',
                 'criticity': 'medium',
                 'component': line['Matching file'],
                 'reason': matches
             })
+        return True
