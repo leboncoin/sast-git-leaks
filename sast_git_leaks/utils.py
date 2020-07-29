@@ -39,6 +39,25 @@ def read_csv(path: Path):
         return data
 
 
+def write_csv(path: Path, data: list, headers: list, write_headers=False):
+    '''
+    Write data in csv file
+    '''
+    logger = logging.getLogger(__name__)
+    logger.info(f'Adding {len(data)} rows in file {path.resolve()}')
+    try:
+        with path.open(mode='a', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=headers, delimiter=',', quotechar='"')
+            if write_headers:
+                writer.writeheader()
+            for line in data:
+                writer.writerow(line)
+    except Exception as e:
+        logger.error(f'Unable to add lines in {path.resolve()}: {e}')
+        return False
+    else:
+        return True
+
 def read_json(path: Path):
     '''
     Read json file and return a dict
