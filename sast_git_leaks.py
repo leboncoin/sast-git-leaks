@@ -22,6 +22,10 @@ def load_tool(tool: dict, path: Path, logger: logging, report_path: Path):
     '''
     Load tool module then instantiate tool
     '''
+    for variable in variables.MANDATORY_TOOL_VARIABLES:
+        if variable not in tool:
+            logger.error(f'Unable to find mandatory variable {variable}!')
+            return False
     try:
         obj = getattr(
             import_module(f'sast_git_leaks.tools.{tool["name"]}'),
