@@ -107,12 +107,6 @@ def main():
         logger.info(f'Running {tool["name"]}')
         if not tool['object'].process():
             logger.error(f'Failed to run {tool["name"]}')
-        else:
-            if not tool['object'].write_report():
-                logger.error(f'Failed to write report for tool {tool["name"]}')
-            else:
-                tool['object'].clean()
-
 
 if __name__ == "__main__":
     main()
