@@ -152,7 +152,6 @@ def setup_logging(path=None):
 
 
 def getLogger(name):
-#    logging.addLevelName(15, "INFO")
     logger = logging.getLogger(name)
     logger_handler = ColorizingStreamHandler(sys.stdout)
     formatter = logging.Formatter("\r[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S")

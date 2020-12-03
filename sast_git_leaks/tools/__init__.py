@@ -48,7 +48,7 @@ class ToolAbstract():
             raise Exception(f"Unable to find [{data['bin']}]")
         self._repo_path = repo_path
         self._tool_report_path = data['report']
-        if not utils.create_dir(data['report'].parent, self._logger):
+        if not utils.create_dir(data['report'].parent):
             raise Exception(f'Unable to create report directory!')
         self._report_path = report_path
         if not self._report_path.parent.exists():
@@ -174,7 +174,7 @@ class ToolAbstract():
         self._logger.info(f'Removing {self._tool_report_path.resolve()}')
         self._tool_report = list()
         self._report = list()
-        if not utils.clean_file(self._tool_report_path, self._logger):
+        if not utils.clean_file(self._tool_report_path):
             self._logger.warning('Unable to clean tmp files')
             return False
         return True

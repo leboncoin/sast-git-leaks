@@ -14,8 +14,8 @@ from .. import logger as logging
 
 
 class Shhgit(ToolAbstract):
-    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path) -> None:
-        self._logger = logging.getLogger(__name__)
+    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path, loggername: str) -> None:
+        self._logger = logging.getLogger(loggername)
         super().__init__(data, path, data_path, report_path)
 
     def load_data(self, path: Path):

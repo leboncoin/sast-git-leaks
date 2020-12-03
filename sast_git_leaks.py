@@ -18,7 +18,7 @@ from sast_git_leaks import logger as logging
 from sast_git_leaks import utils
 
 
-def load_tool(tool: dict, path: Path, logger: logging, report_path: Path):
+def load_tool(tool: dict, path: Path, logger: logging, report_path: Path, loggername: str):
     '''
     Load tool module then instantiate tool
     '''
@@ -34,7 +34,8 @@ def load_tool(tool: dict, path: Path, logger: logging, report_path: Path):
                 tool,
                 path,
                 variables.DATA_PATH,
-                report_path
+                report_path,
+                loggername
             )
     except Exception as e:
         logger.error(f'Unable to load {tool["name"]}: {e}', exc_info=True)
@@ -44,7 +45,7 @@ def load_tool(tool: dict, path: Path, logger: logging, report_path: Path):
         return obj
 
 
-def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path):
+def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path, loggername: str):
     '''
     Check which tools to load from argument
     '''
@@ -62,7 +63,7 @@ def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path
                 tools_to_load[name] = variables.TOOLS[name]
     logger.info(f'Loading tools...')
     for data in tools_to_load.values():
-        obj = load_tool(data, path, logger, report_path)
+        obj = load_tool(data, path, logger, report_path, loggername)
         if obj is False:
             logger.info(f'Load tools  aborted.')
             return False
@@ -72,7 +73,7 @@ def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path
 
 def main():
     logging.setup_logging(variables.LOG_FILENAME.absolute())
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(variables.LOG_ENV)
     tools_names = variables.TOOLS.keys()
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--repo', help='name of the repo to scan', required=True)
@@ -99,7 +100,7 @@ def main():
         if not variables.DATA_PATH.is_dir():
             logger.error(f'Unable to find a valid data path for [{variables.DATA_PATH.resolve()}]')
             sys.exit(1)
-    tools = load_tools(args.tools, repo_path, logger, report_path)
+    tools = load_tools(args.tools, repo_path, logger, report_path, variables.LOG_ENV)
     if tools is False:
         sys.exit(1)
     logger.info(f'Tools loaded: {", ".join([tool["name"] for tool in tools])}')
