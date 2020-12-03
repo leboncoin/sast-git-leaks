@@ -15,6 +15,8 @@ DATA_PATH = CONFIG_PATH / '..' / 'data'
 REPORT_PATH = CONFIG_PATH / '..' / 'reports'
 LOG_FILENAME = CONFIG_PATH / 'log.yml'
 
+LOG_ENV = 'Sast Git Leaks'
+
 MANDATORY_TOOL_VARIABLES = ['class', 'name', 'bin', 'cmd', 'args']
 
 # GITLEAKS VARIABLES

@@ -17,10 +17,10 @@ handlers:
     formatter: syslog
     address: '/dev/log'
 loggers:
-  my_module:
+  dev:
     level: DEBUG
-    handlers: [console]
     propagate: no
+    handlers: [console, syslog]
 root:
   level: INFO
-  handlers: [console, syslog]
+  handlers: [syslog]
