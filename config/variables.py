@@ -28,13 +28,14 @@ GITLEAKS = {
 }
 GITLEAKS['report'] = REPORT_PATH / GITLEAKS['name'] / f'gitleaks_report_{str(uuid4()).replace("-", "_")}'
 GITLEAKS['conf'] = CONFIG_PATH / GITLEAKS['name'] / 'leaky-repo.toml'
-GITLEAKS['args'] = f'--verbose --report={GITLEAKS["report"].resolve()} --config={GITLEAKS["conf"].resolve()}'
+GITLEAKS['args'] = f'--report={GITLEAKS["report"].resolve()} --config={GITLEAKS["conf"].resolve()}'
 GITLEAKS['data_last_commit_filename'] = '{name}_{repo}.txt'
 GITLEAKS['last_commit_cmd'] = 'git -C {repo_path} rev-parse HEAD'
 GITLEAKS['arg_commit_to'] = ' --commit-to={commit}'
 GITLEAKS['arg_commit_from'] = ' --commit-from={commit}'
 GITLEAKS['number_commits'] = 100
 GITLEAKS['cmd_get_nth_commit'] = 'git -C {repo_path} log --format=format:%H -1 --skip={value}'
+GITLEAKS['cmd_get_commits'] = 'git -C {repo_path} log --format=format:%H'
 GITLEAKS['cmd_get_nth_commit_from'] = ' {commit}..'
 
 # SHHGIT VARIABLES
