@@ -109,5 +109,6 @@ def main():
         if not tool['object'].process():
             logger.error(f'Failed to run {tool["name"]}')
 
+
 if __name__ == "__main__":
     main()
