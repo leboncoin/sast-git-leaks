@@ -30,8 +30,9 @@ class ToolAbstract():
     _tool_data = dict()
     _headers_report = ['title', 'criticity', 'component', 'reason']
     _lock_file = None
+    _limit = -1
 
-    def __init__(self, data: dict, repo_path: Path, data_path: Path, report_path: Path) -> None:
+    def __init__(self, data: dict, repo_path: Path, data_path: Path, report_path: Path, loggername, limit: int) -> None:
         '''
         '''
         try:
@@ -49,6 +50,7 @@ class ToolAbstract():
             name=self._tool_data['name'],
             hash=sha256(str(repo_path.resolve()).encode()).hexdigest()
         )
+        self._limit = limit
         self._tool_report_path = data_path
         if not self._check_binary(data['bin']):
             raise Exception(f"Unable to find [{data['bin']}]")

@@ -18,9 +18,9 @@ class Gitleaks(ToolAbstract):
     _min_number_commits = 10
     _commits = list()
 
-    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path, loggername: str) -> None:
+    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path, loggername: str, limit: int) -> None:
         self._logger = logging.getLogger(loggername)
-        super().__init__(data, path, data_path, report_path)
+        super().__init__(data, path, data_path, report_path, loggername, limit)
         self._tool_data['last_commit_path'] = data_path / data['data_last_commit_filename'].format(
             name=self._tool_data['name'],
             repo=path.parts[-1].replace(' ', '_').lower()
@@ -157,7 +157,11 @@ class Gitleaks(ToolAbstract):
             if not self._create_lock_file():
                 return False
         index = 0
-        commits_reverse = self._commits[::-1]
+        commits = self._commits
+        if self._limit > 0:
+            if self._limit < len(self._commits):
+                commits = self._commits[:self._limit]
+        commits_reverse = commits[::-1]
         while index <= len(commits_reverse):
             self._logger.debug(f'Index [{index}]')
             end = index + self._tool_data['number_commits'] - 1

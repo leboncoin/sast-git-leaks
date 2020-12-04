@@ -18,7 +18,7 @@ from sast_git_leaks import logger as logging
 from sast_git_leaks import utils
 
 
-def load_tool(tool: dict, path: Path, logger: logging, report_path: Path, loggername: str):
+def load_tool(tool: dict, path: Path, logger: logging, report_path: Path, loggername: str, limit: int):
     '''
     Load tool module then instantiate tool
     '''
@@ -35,7 +35,8 @@ def load_tool(tool: dict, path: Path, logger: logging, report_path: Path, logger
                 path,
                 variables.DATA_PATH,
                 report_path,
-                loggername
+                loggername,
+                limit
             )
     except Exception as e:
         logger.error(f'Unable to load {tool["name"]}: {e}', exc_info=True)
@@ -45,7 +46,7 @@ def load_tool(tool: dict, path: Path, logger: logging, report_path: Path, logger
         return obj
 
 
-def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path, loggername: str):
+def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path, loggername: str, limit: int):
     '''
     Check which tools to load from argument
     '''
@@ -63,7 +64,7 @@ def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path
                 tools_to_load[name] = variables.TOOLS[name]
     logger.info(f'Loading tools...')
     for data in tools_to_load.values():
-        obj = load_tool(data, path, logger, report_path, loggername)
+        obj = load_tool(data, path, logger, report_path, loggername, limit)
         if obj is False:
             logger.info(f'Load tools  aborted.')
             return False
@@ -80,6 +81,7 @@ def main():
     parser.add_argument('-o', '--output', help='name of the json report', required=True)
     parser.add_argument('-t', '--tools', help=f'tools to use ({",".join(tools_names)})', default='all')
     parser.add_argument('-v', '--volume', help='directory to keep data', default=variables.DATA_PATH)
+    parser.add_argument('-l', '--limit', help='limit number of commits to check', default=-1)
     args = parser.parse_args()
     repo_path = Path(args.repo)
     logger.info(f'Repository to check: {repo_path}')
@@ -100,7 +102,7 @@ def main():
         if not variables.DATA_PATH.is_dir():
             logger.error(f'Unable to find a valid data path for [{variables.DATA_PATH.resolve()}]')
             sys.exit(1)
-    tools = load_tools(args.tools, repo_path, logger, report_path, variables.LOG_ENV)
+    tools = load_tools(args.tools, repo_path, logger, report_path, variables.LOG_ENV, args.limit)
     if tools is False:
         sys.exit(1)
     logger.info(f'Tools loaded: {", ".join([tool["name"] for tool in tools])}')
