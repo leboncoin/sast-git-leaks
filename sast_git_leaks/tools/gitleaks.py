@@ -201,4 +201,5 @@ class Gitleaks(ToolAbstract):
                 else:
                     self.clean()
             index += self._tool_data['number_commits']
+        self._remove_lock_file()
         return True
