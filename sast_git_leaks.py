@@ -78,17 +78,20 @@ def main():
     tools_names = variables.TOOLS.keys()
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--repo', help='name of the repo to scan', required=True)
-    parser.add_argument('-o', '--output', help='name of the json report', required=True)
+    parser.add_argument('-o', '--output', help='name of the report (default to csv)', required=True)
     parser.add_argument('-t', '--tools', help=f'tools to use ({",".join(tools_names)})', default='all')
     parser.add_argument('-v', '--volume', help='directory to keep data', default=variables.DATA_PATH)
     parser.add_argument('-l', '--limit', help='limit number of commits to check', default=-1)
+    parser.add_argument('-j', '--json', help='write report in json format', action='store_true')
     args = parser.parse_args()
     repo_path = Path(args.repo)
     logger.info(f'Repository to check: {repo_path}')
     if not repo_path.is_dir():
         logger.error(f"Wront repo path [{repo_path}]!")
         sys.exit(1)
-    report_path = Path(args.output)
+    if args.json:
+        path = f'{args.output}.csv'
+        report_path = Path(path)
     logger.info(f'Report path: {report_path}')
     variables.DATA_PATH = Path(args.volume)
     if not variables.DATA_PATH.exists():
@@ -110,6 +113,13 @@ def main():
         logger.info(f'Running {tool["name"]}')
         if not tool['object'].process():
             logger.error(f'Failed to run {tool["name"]}')
+    if args.json:
+        if not utils.convert_csv_to_json(report_path, Path(args.output)):
+            logger.error(f'Unable to convert csv file ({report_path.resolve()}) to json file ({args.output})')
+        try:
+            report_path.unlink()
+        except Exception as e:
+            logger.warning(f'Unable to remove {report_path.resolve()}: {e}')
 
 
 if __name__ == "__main__":

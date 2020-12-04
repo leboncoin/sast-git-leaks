@@ -14,6 +14,7 @@ from . import logger as logging
 
 LOGGER = logging.getLogger('Sast Git Leaks')
 
+
 def read_csv(path: Path):
     '''
     Read csv file and return list of rows
@@ -39,11 +40,32 @@ def read_csv(path: Path):
         return data
 
 
+def convert_csv_to_json(csv_path: Path, json_path: Path):
+    '''
+    Convert CSV file to json file
+    '''
+    LOGGER.debug(f'Converting {csv_path} to {json_path}')
+    csv_rows = read_csv(csv_path)
+    if not csv_rows:
+        return False
+    try:
+        json_path.write_text(json.dumps(
+            csv_rows,
+            separators=(',', ':'),
+            indent=4,
+            sort_keys=False
+        ))
+    except Exception as e:
+        LOGGER.error(f'Unable to create json file {json_path}: {e}')
+        return False
+    return True
+
+
 def write_csv(path: Path, data: list, headers: list, write_headers=False):
     '''
     Write data in csv file
     '''
-#    LOGGER.info(f'Adding {len(data)} rows in file {path.resolve()}')
+    LOGGER.debug(f'Adding {len(data)} rows in file {path.resolve()}')
     try:
         with path.open(mode='a', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=headers, delimiter=',', quotechar='"')
@@ -56,6 +78,7 @@ def write_csv(path: Path, data: list, headers: list, write_headers=False):
         return False
     else:
         return True
+
 
 def read_json(path: Path):
     '''
