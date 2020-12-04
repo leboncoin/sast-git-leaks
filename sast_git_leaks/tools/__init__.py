@@ -12,6 +12,7 @@ import shlex
 import json
 from pathlib import Path
 import csv
+from hashlib import sha256
 
 from .. import utils
 
@@ -28,6 +29,7 @@ class ToolAbstract():
     _tool_report_path = None
     _tool_data = dict()
     _headers_report = ['title', 'criticity', 'component', 'reason']
+    _lock_file = None
 
     def __init__(self, data: dict, repo_path: Path, data_path: Path, report_path: Path) -> None:
         '''
@@ -43,6 +45,10 @@ class ToolAbstract():
         except Exception as e:
             raise Exception(f'Unable to set command: {e}')
         self._tool_data = data
+        self._tool_data['lock_file'] = data_path / '{name}_{hash}.lock'.format(
+            name=self._tool_data['name'],
+            hash=sha256(str(repo_path.resolve()).encode()).hexdigest()
+        )
         self._tool_report_path = data_path
         if not self._check_binary(data['bin']):
             raise Exception(f"Unable to find [{data['bin']}]")
@@ -90,6 +96,45 @@ class ToolAbstract():
         '''
         raise NotImplemented
 
+    def _check_lock_file(self) -> bool:
+        '''
+        Return True if lock_file exists
+        '''
+        return self._tool_data['lock_file'].exists()
+
+    def _create_lock_file(self) -> bool:
+        '''
+        Create lock_file
+        '''
+        if not self._tool_data['lock_file'].parent.exists():
+            try:
+                self._tool_data['lock_file'].parent.mkdir(parents=False)
+            except Exception as e:
+                self._logger.error(f'{self._tool_data["name"].capitalize()}: Unable to create directroy {self._tool_data["lock_file"].resolve().parent}: {e}')
+                return False
+        try:
+            self._tool_data["lock_file"].write_text('')
+        except Exception as e:
+            self._logger.error(f'{self._tool_data["name"].capitalize()}: Unable to create lock_file {self._tool_data["lock_file"]}: {e}')
+            return False
+        self._logger.info(f'{self._tool_data["name"].capitalize()}: lock_file {self._tool_data["lock_file"]} created')
+        return True
+
+    def _remove_lock_file(self) -> bool:
+        '''
+        Remove lock_file
+        '''
+        if not self._tool_data["lock_file"].exists():
+            self._logger.warning(f'{self._tool_data["name"].capitalize()}: Lock file {self._tool_data["lock_file"]} doesn\'t exist')
+            return True
+        try:
+            self._tool_data["lock_file"].unlink()
+        except Exception as e:
+            self._logger.error(f'Unable to remove lock_file {self._tool_data["lock_file"]}: {e}')
+            return False
+        self._logger.info(f'{self._tool_data["name"].capitalize()}: lock_file {self._tool_data["lock_file"]} removed')
+        return  True
+
     def process(self, generate_report=True, write_report=True, clean=True) -> bool:
         '''
         Process data by:
@@ -98,25 +143,35 @@ class ToolAbstract():
             - Formating report (if any report found)
         '''
         self._logger.debug("Processing...")
+        if self._check_lock_file():
+            self._logger.warning(f'{self._tool_data["name"].capitalize()}: Repo {self._repo_path} is already being inspected')
+            return False
+        else:
+            if not self._create_lock_file():
+                return False
         if not self._run_command(self._command):
             self._logger.debug('Aborted!')
             return False
         if not self.load_data(self._tool_report_path):
             if clean:
                 self.clean()
+            self._remove_lock_file()
             return False
         if generate_report:
             if self.generate_report() is False:
                 if clean:
                     self.clean()
+                self._remove_lock_file()
                 return False
         if write_report:
             if self.write_csv_report() is False:
                 if clean:
                     self.clean()
+                self._remove_lock_file()
                 return False
         if clean:
             self.clean()
+        self._remove_lock_file()
         return True
 
     def get_report_path(self) -> Path:

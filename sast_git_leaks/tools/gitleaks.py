@@ -150,8 +150,13 @@ class Gitleaks(ToolAbstract):
         As git repo may be big, we have to split it
         '''
         self._logger.debug("Processing...")
+        if self._check_lock_file():
+            self._logger.warning(f'{self._tool_data["name"].capitalize()}: Repo {self._repo_path} is already being inspected')
+            return False
+        else:
+            if not self._create_lock_file():
+                return False
         index = 0
-        done = False
         commits_reverse = self._commits[::-1]
         while index <= len(commits_reverse):
             self._logger.debug(f'Index [{index}]')
@@ -163,11 +168,12 @@ class Gitleaks(ToolAbstract):
             command = self._command
             command += self._tool_data['arg_commit_from'].format(commit=commit_from)
             command += self._tool_data['arg_commit_to'].format(commit=commit_to)
-            self._logger.info(f'Command to run => {command}')
+            self._logger.debug(f'Command to run => {command}')
             if not self._run_command(command):
                 self._logger.error(f'Unable to run command. Aborted!')
                 if clean:
                     self.clean()
+                self._remove_lock_file()
                 return False
             else:
                 self._tool_data["last_commit"] = commit_from
@@ -177,17 +183,20 @@ class Gitleaks(ToolAbstract):
                 if not self.load_data(self._tool_report_path):
                     if clean:
                         self.clean()
+                    self._remove_lock_file()
                     return False
                 if not self.generate_report():
                     self._logger.error(f'Unable to generate report for index {index}: Aborted.')
                     if clean:
                         self.clean()
+                    self._remove_lock_file()
                     return False
             if write_report:
                 if not self.write_csv_report():
                     self._logger.error(f'Unable to write report for index {index}: Aborted.')
                     if clean:
                         self.clean()
+                    self._remove_lock_file()
                     return False
                 else:
                     self.clean()
