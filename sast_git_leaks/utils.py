@@ -47,7 +47,7 @@ def convert_csv_to_json(csv_path: Path, json_path: Path):
     LOGGER.debug(f'Converting {csv_path} to {json_path}')
     csv_rows = read_csv(csv_path)
     if not csv_rows:
-        return False
+        csv_rows = []
     try:
         json_path.write_text(json.dumps(
             csv_rows,
