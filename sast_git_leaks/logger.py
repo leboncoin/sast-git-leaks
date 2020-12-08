@@ -160,6 +160,6 @@ def getLogger(name):
         formatter = logging.Formatter("\r[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S")
         logger_handler.setFormatter(formatter)
         logger_handler.level_map[logging.getLevelName("INFO")] = (None, "cyan", False)
-        logger.addHandler(logger_handler)
-    return logger
+        LOGGER.addHandler(logger_handler)
+    return LOGGER
 
