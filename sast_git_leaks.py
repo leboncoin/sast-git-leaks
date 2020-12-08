@@ -81,7 +81,7 @@ def main():
     parser.add_argument('-o', '--output', help='name of the report (default to csv)', required=True)
     parser.add_argument('-t', '--tools', help=f'tools to use ({",".join(tools_names)})', default='all')
     parser.add_argument('-v', '--volume', help='directory to keep data', default=variables.DATA_PATH)
-    parser.add_argument('-l', '--limit', help='limit number of commits to check', default=-1)
+    parser.add_argument('-l', '--limit', help='limit number of commits to check', default=-1, type=int)
     parser.add_argument('-j', '--json', help='write report in json format', action='store_true')
     args = parser.parse_args()
     repo_path = Path(args.repo)
