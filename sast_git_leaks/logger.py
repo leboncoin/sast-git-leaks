@@ -150,13 +150,16 @@ def setup_logging(path=None):
         logging.getLogger(__name__).warning("Log: defaut logger config used", exc_info=True)
         return False
 
+LOGGER = None
 
 def getLogger(name):
-    logger = logging.getLogger(name)
-    logger_handler = ColorizingStreamHandler(sys.stdout)
-    formatter = logging.Formatter("\r[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S")
-    logger_handler.setFormatter(formatter)
-    logger_handler.level_map[logging.getLevelName("INFO")] = (None, "cyan", False)
-    logger.addHandler(logger_handler)
+    global LOGGER
+    if LOGGER is None:
+        LOGGER = logging.getLogger(name)
+        logger_handler = ColorizingStreamHandler(sys.stdout)
+        formatter = logging.Formatter("\r[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S")
+        logger_handler.setFormatter(formatter)
+        logger_handler.level_map[logging.getLevelName("INFO")] = (None, "cyan", False)
+        logger.addHandler(logger_handler)
     return logger
 
