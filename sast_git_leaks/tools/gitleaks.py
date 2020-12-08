@@ -162,10 +162,10 @@ class Gitleaks(ToolAbstract):
             if self._limit < len(self._commits):
                 commits = self._commits[:self._limit]
         commits_reverse = commits[::-1]
-        while index <= len(commits_reverse):
+        while index < len(commits_reverse):
             self._logger.debug(f'Index [{index}]')
             end = index + self._tool_data['number_commits'] - 1
-            if end > len(commits_reverse):
+            if end >= len(commits_reverse):
                 end = -1
             commit_from = commits_reverse[end]
             commit_to = commits_reverse[index]
