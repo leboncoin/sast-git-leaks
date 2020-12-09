@@ -115,7 +115,7 @@ class Gitleaks(ToolAbstract):
                 'title': f'[{self._tool_data["name"]}]: {line["rule"]}',
                 'criticity': 'medium',
                 'component': line['file'],
-                'reason': f'Commit: `{line["commit"]}` | Rule: **{line["rule"]}** | Code: `{line["line"]}`'
+                'reason': f'Commit: {line["commit"]} | Rule: {line["rule"]} | Code: {line["line"]}'
             })
         return True
 
