@@ -72,6 +72,45 @@ def load_tools(tools_loaded: str, path: Path, logger: logging, report_path: Path
     return tools
 
 
+def process(repo_path, output, volume=None, limit=-1, tools='all'):
+    logger = logging.getLogger(__name__)
+    logger.info(f'Repository to check: {repo_path}')
+    if not repo_path.is_dir():
+        logger.error(f"Wront repo path [{repo_path}]!")
+        return False
+    report_path = Path(f'{output}.csv')
+    logger.info(f'Report path: {report_path}')
+    if volume is not None:
+        variables.DATA_PATH = Path(volume)
+    if not variables.DATA_PATH.exists():
+        logger.info(f'Creating data folder [{variables.DATA_PATH.resolve()}]')
+        try:
+            variables.DATA_PATH.mkdir(parents=True)
+        except Exception as e:
+            logger.error(f'Unable to create data directory [{variables.DATA_PATH.resolve()}]: {e}')
+            return False
+    else:
+        if not variables.DATA_PATH.is_dir():
+            logger.error(f'Unable to find a valid data path for [{variables.DATA_PATH.resolve()}]')
+            return False
+    tools = load_tools(tools, repo_path, logger, report_path, variables.LOG_ENV, limit)
+    if tools is False:
+        return False
+    logger.info(f'Tools loaded: {", ".join([tool["name"] for tool in tools])}')
+    for tool in tools:
+        logger.info(f'Running {tool["name"]}')
+        if not tool['object'].process():
+            logger.error(f'Failed to run {tool["name"]}')
+    data = utils.read_csv(report_path)
+    if not utils.convert_csv_to_json(report_path, Path(output)):
+        logger.error(f'Unable to convert csv file ({report_path.resolve()}) to json file ({args.output})')
+    try:
+        report_path.unlink()
+    except Exception as e:
+        logger.warning(f'Unable to remove {report_path.resolve()}: {e}')
+    return data
+
+
 def main():
     logging.setup_logging(variables.LOG_FILENAME.absolute())
     logger = logging.getLogger(variables.LOG_ENV)
@@ -84,42 +123,18 @@ def main():
     parser.add_argument('-l', '--limit', help='limit number of commits to check', default=-1, type=int)
     parser.add_argument('-j', '--json', help='write report in json format', action='store_true')
     args = parser.parse_args()
-    repo_path = Path(args.repo)
-    logger.info(f'Repository to check: {repo_path}')
-    if not repo_path.is_dir():
-        logger.error(f"Wront repo path [{repo_path}]!")
+    volume = None
+    if args.volume:
+        volume = args.volume
+    if not process(
+        Path(args.repo),
+        args.output,
+        volume,
+        args.limit,
+        args.tools
+    ):
         sys.exit(1)
-    if args.json:
-        path = f'{args.output}.csv'
-        report_path = Path(path)
-    logger.info(f'Report path: {report_path}')
-    variables.DATA_PATH = Path(args.volume)
-    if not variables.DATA_PATH.exists():
-        logger.info(f'Creating data folder [{variables.DATA_PATH.resolve()}]')
-        try:
-            variables.DATA_PATH.mkdir(parents=True)
-        except Exception as e:
-            logger.error(f'Unable to create data directory [{variables.DATA_PATH.resolve()}]: {e}')
-            sys.exit(1)
-    else:
-        if not variables.DATA_PATH.is_dir():
-            logger.error(f'Unable to find a valid data path for [{variables.DATA_PATH.resolve()}]')
-            sys.exit(1)
-    tools = load_tools(args.tools, repo_path, logger, report_path, variables.LOG_ENV, args.limit)
-    if tools is False:
-        sys.exit(1)
-    logger.info(f'Tools loaded: {", ".join([tool["name"] for tool in tools])}')
-    for tool in tools:
-        logger.info(f'Running {tool["name"]}')
-        if not tool['object'].process():
-            logger.error(f'Failed to run {tool["name"]}')
-    if args.json:
-        if not utils.convert_csv_to_json(report_path, Path(args.output)):
-            logger.error(f'Unable to convert csv file ({report_path.resolve()}) to json file ({args.output})')
-        try:
-            report_path.unlink()
-        except Exception as e:
-            logger.warning(f'Unable to remove {report_path.resolve()}: {e}')
+    sys.exit(0)
 
 
 if __name__ == "__main__":
