@@ -93,13 +93,21 @@ def process(repo_path, output, variables, volume=None, limit=-1, tools='all'):
     logger.info(f'Tools loaded: {", ".join([tool["name"] for tool in tools])}')
     for tool in tools:
         logger.info(f'Running {tool["name"]}')
-        if not tool['object'].process():
-            logger.error(f'Failed to run {tool["name"]}')
-    data = utils.read_csv(report_path)
-    if not utils.convert_csv_to_json(report_path, Path(output)):
-        logger.error(f'Unable to convert csv file ({report_path.resolve()}) to json file ({args.output})')
+        try:
+            if not tool['object'].process():
+                logger.error(f'Failed to run {tool["name"]}')
+        except Exception as e:
+            logger.error(f'Failed to run {tool["name"]} process method: {e}')
     try:
-        report_path.unlink()
+        data = utils.read_csv(report_path)
     except Exception as e:
-        logger.warning(f'Unable to remove {report_path.resolve()}: {e}')
-    return data
+        logger.error(f'Unable to read csv data from {report_path}: {e}')
+        return False
+    else:
+        if not utils.convert_csv_to_json(report_path, Path(output)):
+            logger.error(f'Unable to convert csv file ({report_path.resolve()}) to json file ({args.output})')
+        try:
+            report_path.unlink()
+        except Exception as e:
+            logger.warning(f'Unable to remove {report_path.resolve()}: {e}')
+        return data

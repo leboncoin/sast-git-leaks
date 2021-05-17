@@ -218,9 +218,9 @@ class ToolAbstract():
                 return False
             else:
                 if len(e) > 0:
-                    self._logger.error(f'Error in execution: {e.decode("utf-8")}')
+                    self._logger.error(f'Error in execution: {e.decode("utf-8", "ignore")}')
                     return False
-                self._output_command = o.decode('utf-8')
+                self._output_command = o.decode('utf-8', 'ignore')
                 self._logger.debug(f'Output from [{command}]: {self._output_command}')
         return True
 
