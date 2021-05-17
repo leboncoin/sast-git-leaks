@@ -22,7 +22,7 @@ def load_tool(variables, tool: dict, path: Path, logger: logging, report_path: P
             return False
     try:
         obj = getattr(
-            import_module(f'sast_git_leaks.tools.{tool["name"]}'),
+            import_module(f'.{tool["name"]}', variables.MODULE_TOOLS_PATH),
             tool['class']
             )(
                 tool,
