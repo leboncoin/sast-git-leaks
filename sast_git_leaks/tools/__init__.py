@@ -200,7 +200,7 @@ class ToolAbstract():
         Run command after spliting it
         It uses the subprocess.Popen function
         '''
-        self._logger.info(f'MEOW: Running command "{command}"')
+        self._logger.debug(f'Running command "{command}"')
         command_split = self._prepare_command(command)
         if command_split is False:
             self._logger.error('Unable to run command: Bad split command!')
