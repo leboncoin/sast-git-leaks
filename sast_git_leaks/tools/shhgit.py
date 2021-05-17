@@ -7,16 +7,16 @@ Licensed under the Apache License
 Written by Fabien Martinez <fabien.martinez+github@adevinta.com>
 '''
 from pathlib import Path
+import logging
 
 from .import ToolAbstract
 from ..utils import read_csv
-from .. import logger as logging
 
 
 class Shhgit(ToolAbstract):
-    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path, loggername: str, limit: int) -> None:
-        self._logger = logging.getLogger(loggername)
-        super().__init__(data, path, data_path, report_path, loggername, limit)
+    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path, limit: int) -> None:
+        self._logger = logging.getLogger(__name__)
+        super().__init__(data, path, data_path, report_path, limit)
 
     def load_data(self, path: Path):
         '''
@@ -30,7 +30,7 @@ class Shhgit(ToolAbstract):
         data = read_csv(path)
         if data is not False:
             self._tool_report = data
-        return data != False
+        return data is not False
 
     def generate_report(self) -> bool:
         '''

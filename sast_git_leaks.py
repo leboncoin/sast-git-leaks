@@ -12,12 +12,12 @@ from pathlib import Path
 import argparse
 
 from config import variables
-from sast_git_leaks import logger as logging
+from sast_git_leaks.utils import set_logging
 from sast_git_leaks import process
 
 
 def main():
-    logging.setup_logging(variables.LOG_FILENAME.absolute())
+    set_logging()
     tools_names = variables.TOOLS.keys()
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--repo', help='name of the repo to scan', required=True)

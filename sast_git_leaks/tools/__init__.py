@@ -32,7 +32,7 @@ class ToolAbstract():
     _lock_file = None
     _limit = -1
 
-    def __init__(self, data: dict, repo_path: Path, data_path: Path, report_path: Path, loggername, limit: int) -> None:
+    def __init__(self, data: dict, repo_path: Path, data_path: Path, report_path: Path, limit: int) -> None:
         '''
         '''
         try:
@@ -57,7 +57,7 @@ class ToolAbstract():
         self._repo_path = repo_path
         self._tool_report_path = data['report']
         if not utils.create_dir(data['report'].parent):
-            raise Exception(f'Unable to create report directory!')
+            raise Exception('Unable to create report directory!')
         self._report_path = report_path
         if not self._report_path.parent.exists():
             self._logger.warning(f'Directory [{self._report_path.parent.resolve()}] doesn\'t exist, creating it')
@@ -90,13 +90,13 @@ class ToolAbstract():
         '''
         Load data from Path variable
         '''
-        raise NotImplemented
+        raise NotImplementedError
 
     def generate_report(self) -> bool:
         '''
         Generate data from _data
         '''
-        raise NotImplemented
+        raise NotImplementedError
 
     def _check_lock_file(self) -> bool:
         '''
@@ -135,7 +135,7 @@ class ToolAbstract():
             self._logger.error(f'Unable to remove lock_file {self._tool_data["lock_file"]}: {e}')
             return False
         self._logger.info(f'{self._tool_data["name"].capitalize()}: lock_file {self._tool_data["lock_file"]} removed')
-        return  True
+        return True
 
     def process(self, generate_report=True, write_report=True, clean=True) -> bool:
         '''
@@ -146,7 +146,7 @@ class ToolAbstract():
         '''
         self._logger.debug("Processing...")
         if self._check_lock_file():
-            self._logger.warning(f'{self._tool_data["name"].capitalize()}: Repo {self._repo_path} is already being inspected')
+            self._logger.error(f'{self._tool_data["name"].capitalize()}: Repo {self._repo_path} is already being inspected')
             return False
         else:
             if not self._create_lock_file():
@@ -200,7 +200,7 @@ class ToolAbstract():
         Run command after spliting it
         It uses the subprocess.Popen function
         '''
-        self._logger.debug(f'Running command [{command}]')
+        self._logger.info(f'MEOW: Running command "{command}"')
         command_split = self._prepare_command(command)
         if command_split is False:
             self._logger.error('Unable to run command: Bad split command!')
@@ -214,7 +214,7 @@ class ToolAbstract():
             try:
                 o, e = proc.communicate()
             except Exception as e:
-                self._logger.error(f'Unable to start command [{command}')
+                self._logger.error(f'Unable to start command [{command}]: {e}')
                 return False
             else:
                 if len(e) > 0:

@@ -9,10 +9,23 @@ Written by Fabien Martinez <fabien.martinez+github@adevinta.com>
 import csv
 import json
 from pathlib import Path
+import logging
 
-from . import logger as logging
+from rich.logging import RichHandler
 
 LOGGER = logging.getLogger('Sast Git Leaks')
+
+
+def set_logging(level=logging.INFO):
+    FORMAT = "%(message)s"
+    logging.basicConfig(
+        level=level,
+        format=FORMAT,
+        datefmt="[%X]",
+        handlers=[RichHandler(rich_tracebacks=True, markup=True)]
+    )
+    global LOGGER
+    LOGGER = logging.getLogger('Sast Git Leaks')
 
 
 def read_csv(path: Path):
@@ -25,18 +38,18 @@ def read_csv(path: Path):
             try:
                 csv_data = csv.DictReader(f)
             except Exception as e:
-                LOGGER.error(f'Unable to get csv data from [{path.resolve()}]: {e}')
+                LOGGER.error(f'Unable to get csv data from {path.resolve()}: {e}')
                 return False
             try:
                 data = [line for line in csv_data]
             except Exception as e:
-                LOGGER.error(f'Unable to get csv data from [{path.resolve()}]: {e}')
+                LOGGER.error(f'Unable to get csv data from {path.resolve()}: {e}')
                 return False
     except Exception as e:
-        LOGGER.error(f'Unable to read file [{path.resolve()}]: {e}')
+        LOGGER.error(f'Unable to read file {path.resolve()}: {e}')
         return False
     else:
-        LOGGER.info(f'Data successfully extracted from [{path}]')
+        LOGGER.info(f'Data successfully extracted from {path}')
         return data
 
 
@@ -90,10 +103,10 @@ def read_json(path: Path):
             try:
                 json_data = json.load(f)
             except Exception as e:
-                LOGGER.error(f'Unable to get json data from [{path.resolve()}]: {e}')
+                LOGGER.error(f'Unable to get json data from {path.resolve()}: {e}')
                 return False
     except Exception as e:
-        LOGGER.error(f'Unable to read file [{path.resolve()}]: {e}')
+        LOGGER.error(f'Unable to read file {path.resolve()}: {e}')
         return False
     else:
         LOGGER.info(f'Data successfully extracted from [{path}]')
@@ -133,9 +146,9 @@ def clean_file(path: Path) -> bool:
                 LOGGER.error(f'Unable to remove file [{path.resolve()}]: {e}')
                 return False
             else:
-                LOGGER.info(f'File [{path.resolve()}] removed')
+                LOGGER.info(f'File {path.resolve()} removed')
                 return True
         else:
-            LOGGER.error(f'Wrong type file for [{path.resolve()}]: Aborted')
+            LOGGER.error(f'Wrong type file for {path.resolve()}: Aborted')
             return False
     return True
