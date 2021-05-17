@@ -47,7 +47,7 @@ SHHGIT = {
 }
 SHHGIT['report'] = REPORT_PATH / SHHGIT['name'] / f'shhgit_report_{str(uuid4()).replace("-", "_")}.csv'
 SHHGIT['conf'] = CONFIG_PATH / SHHGIT['name']
-SHHGIT['args'] = f'--config-path {SHHGIT["conf"].resolve()} --csv-path={SHHGIT["report"].resolve()}'
+SHHGIT['args'] = f'--config-path {SHHGIT["conf"].resolve()} --csv-path={SHHGIT["report"].resolve()} --entropy-threshold 0'
 
 # TOOLS VARIABLES
 # DON'T FORGET TO ADD YOUR TOOLS HERE
