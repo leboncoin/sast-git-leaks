@@ -466,5 +466,5 @@ signatures:
     regex: '\.?mozilla[\\\/]firefox[\\\/]logins.json$'
     name: 'Firefox saved password collection (can be decrypted using keys4.db)'
   - part: 'contents'
-    regex: '(?i)(passwd|api_key|apikey|password|pass|passw)[ |\t]*[:|=][ |\t]*(''([^\s|'']{4,120})'')|("([^\s|"]{4,120})")'
+    regex: '(?i)(passwd|api_key|apikey|password|pass|passw)[ |\t]*[:|=][ |\t]*[''|"]([^\s|''|"]{4,120})[''|"]'
     name: 'Generic Credential'
