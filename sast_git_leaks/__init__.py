@@ -8,8 +8,8 @@ Written by Fabien Martinez <fabien.martinez+github@adevinta.com>
 from importlib import import_module
 from pathlib import Path
 
-from sast_git_leaks import logger as logging
-from sast_git_leaks import utils
+from . import logger as logging
+from . import utils
 
 
 def load_tool(variables, tool: dict, path: Path, logger: logging, report_path: Path, loggername: str, limit: int):
