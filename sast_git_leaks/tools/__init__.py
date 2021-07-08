@@ -145,6 +145,7 @@ class ToolAbstract():
             - Formating report (if any report found)
         '''
         self._logger.debug("Processing...")
+        self._report = list()
         if self._check_lock_file():
             self._logger.error(f'{self._tool_data["name"].capitalize()}: Repo {self._repo_path} is already being inspected')
             return False
