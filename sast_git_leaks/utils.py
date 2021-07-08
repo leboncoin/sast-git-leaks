@@ -17,12 +17,13 @@ LOGGER = logging.getLogger('Sast Git Leaks')
 
 
 def set_logging(level=logging.INFO):
-    FORMAT = "%(message)s"
+    log_path = Path(__file__).parent / '..' / 'sast_git_leaks.log'
+    FORMAT = "%(asctime)s %(levelname)s - %(message)s"
     logging.basicConfig(
+        filename=log_path,
         level=level,
         format=FORMAT,
-        datefmt="[%X]",
-        handlers=[RichHandler(rich_tracebacks=True, markup=True)]
+        datefmt="[%X]"
     )
     global LOGGER
     LOGGER = logging.getLogger('Sast Git Leaks')
