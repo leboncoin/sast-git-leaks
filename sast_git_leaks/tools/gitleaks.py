@@ -18,8 +18,8 @@ class Gitleaks(ToolAbstract):
     _min_number_commits = 10
     _commits = list()
 
-    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path, limit: int) -> None:
-        self._logger = logging.getLogger(__name__)
+    def __init__(self, logger, data: dict, path: Path, data_path: Path, report_path: Path, limit: int) -> None:
+        self._logger = logger
         super().__init__(data, path, data_path, report_path, limit)
         self._tool_data['last_commit_path'] = data_path / data['data_last_commit_filename'].format(
             name=self._tool_data['name'],

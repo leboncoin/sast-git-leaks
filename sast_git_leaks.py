@@ -10,6 +10,7 @@ Written by Fabien Martinez <fabien.martinez+github@adevinta.com>
 import sys
 from pathlib import Path
 import argparse
+import logging
 
 from config import variables
 from sast_git_leaks.utils import set_logging
@@ -30,7 +31,9 @@ def main():
     volume = None
     if args.volume:
         volume = args.volume
+    logger = logging.getLogger(__name__)
     if not process(
+        logger,
         Path(args.repo),
         args.output,
         variables,

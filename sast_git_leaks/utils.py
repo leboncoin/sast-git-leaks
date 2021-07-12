@@ -11,9 +11,13 @@ import json
 from pathlib import Path
 import logging
 
-from rich.logging import RichHandler
 
 LOGGER = logging.getLogger('Sast Git Leaks')
+
+
+def set_logger(logger):
+    global LOGGER
+    LOGGER = logger
 
 
 def set_logging(level=logging.INFO):

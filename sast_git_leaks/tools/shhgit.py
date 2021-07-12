@@ -14,8 +14,8 @@ from ..utils import read_csv
 
 
 class Shhgit(ToolAbstract):
-    def __init__(self, data: dict, path: Path, data_path: Path, report_path: Path, limit: int) -> None:
-        self._logger = logging.getLogger(__name__)
+    def __init__(self, logger, data: dict, path: Path, data_path: Path, report_path: Path, limit: int) -> None:
+        self._logger = logger
         super().__init__(data, path, data_path, report_path, limit)
 
     def load_data(self, path: Path):

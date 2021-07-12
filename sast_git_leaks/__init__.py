@@ -12,9 +12,8 @@ import logging
 from . import utils
 
 
-utils.set_logging()
-
 LOGGER = logging.getLogger(__name__)
+
 
 def load_tool(variables, tool: dict, path: Path, report_path: Path, limit: int):
     '''
@@ -29,6 +28,7 @@ def load_tool(variables, tool: dict, path: Path, report_path: Path, limit: int):
             import_module(f'.{tool["name"]}', variables.MODULE_TOOLS_PATH),
             tool['class']
             )(
+                LOGGER,
                 tool,
                 path,
                 variables.DATA_PATH,
@@ -69,7 +69,10 @@ def load_tools(variables, tools_loaded: str, path: Path, report_path: Path, limi
     return tools
 
 
-def process(repo_path, output, variables, volume=None, limit=-1, tools='all'):
+def process(logger, repo_path, output, variables, volume=None, limit=-1, tools='all'):
+    global LOGGER
+    LOGGER = logger
+    utils.set_logger(logger)
     LOGGER.info(f'Repository to check: {repo_path}')
     if not repo_path.is_dir():
         LOGGER.error(f"Wrong repo path {repo_path}")
