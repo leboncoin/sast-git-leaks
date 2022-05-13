@@ -1,7 +1,7 @@
 '''
 Sast Git Leaks
 
-Copyright 2020 Leboncoin
+Copyright 2020-2022 Leboncoin
 Licensed under the Apache License
 Written by Fabien Martinez <fabien.martinez+github@adevinta.com>
 '''
@@ -69,10 +69,7 @@ def load_tools(variables, tools_loaded: str, path: Path, report_path: Path, limi
     return tools
 
 
-def process(logger, repo_path, output, variables, volume=None, limit=-1, tools='all'):
-    global LOGGER
-    LOGGER = logger
-    utils.set_logger(logger)
+def process(repo_path, output, variables, volume=None, limit=-1, tools='all'):
     LOGGER.info(f'Repository to check: {repo_path}')
     if not repo_path.is_dir():
         LOGGER.error(f"Wrong repo path {repo_path}")
