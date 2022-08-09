@@ -33,7 +33,6 @@ def main():
         volume = args.volume
     logger = logging.getLogger(__name__)
     if not process(
-        logger,
         Path(args.repo),
         args.output,
         variables,

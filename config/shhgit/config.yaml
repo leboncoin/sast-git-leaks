@@ -9,9 +9,9 @@ webhook_payload: |
     "text": "%s"
   }
 
-blacklisted_strings: ["AKIAIOSFODNN7EXAMPLE", "username:password", "sshpass -p $SSH_PASS"] # skip matches containing any of these strings (case insensitive
+blacklisted_strings: ["AKIAIOSFODNN7EXAMPLE", "username:password", "sshpass -p $SSH_PASS", "password", "12345", "apikey", "qwerty", "XXXXXXX", "abcdef", "secret", "api_key", "example", "test"] # skip matches containing any of these strings (case insensitive
 blacklisted_extensions: [".exe", ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".psd", ".xcf", ".zip", ".tar.gz", ".ttf", ".lock", ".woff", ".svg", ".png", ".eot"]
-blacklisted_paths: ["node_modules{sep}", "vendor{sep}bundle", "vendor{sep}cache", ".git{sep}", "venv{sep}", "font{sep}", "fonts{sep}", "{sep}lang{sep}", "{sep}langs{sep}"] # use {sep} for the OS' path seperator (i.e. / or \)
+blacklisted_paths: ["node_modules{sep}", "vendor{sep}bundle", "vendor{sep}cache", "vendor{sep}github.com", ".git{sep}", "venv{sep}", "font{sep}", "fonts{sep}", "{sep}lang{sep}", "{sep}langs{sep}"] # use {sep} for the OS' path seperator (i.e. / or \)
 blacklisted_entropy_extensions: [".pem", "id_rsa", ".asc", ".ovpn", ".sqlite", ".sqlite3", ".log"] # additional extensions to skip entropy checks
 signatures:
   - part:  'path'
@@ -262,5 +262,5 @@ signatures:
     regex: '\.?mozilla[\\\/]firefox[\\\/]logins.json$'
     name: 'Firefox saved password collection (can be decrypted using keys4.db)'
   - part: 'contents'
-    regex: '(?i)(passwd|api_key|apikey|password|pass|passw|passphrase)\s*[:=]{1,3}\s*[''"]([^''"]{4,120})[''"]'
+    regex: '(?i)(passwd|api_key|apikey|password|pass|passw|passphrase|secret)\s*[:=]{1,3}\s*[''"]([^''"]{4,50})[''"]'
     name: 'Generic Credential'
